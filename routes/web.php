@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SatuanController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,5 +23,21 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
+
+Route::resource('master/satuan',SatuanController::class);
+
+Route::resource('master/barang',BarangController::class);
+
+Route::resource('master/user',UserController::class);
+
+// Route::middleware(['auth'])->group(function () {
+//     Route::prefix('administrator')->group(function () {
+//         Route::get('/',[HomeController::class,'index'])->name('home');
+
+
+
+
+//     });
+// });
 
 require __DIR__.'/auth.php';
