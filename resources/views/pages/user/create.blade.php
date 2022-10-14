@@ -7,7 +7,7 @@
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
                 <h1 class="h3 mb-0 text-gray-800">User</h1>
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{{ route('user.index') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item">Master</li>
                     <li class="breadcrumb-item active" aria-current="page">User</li>
                 </ol>
@@ -60,9 +60,10 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="password">Konfirmasi Password</label>
-                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
-                                            name="password_confirmation" id="password" placeholder="Masukkan Konfirmasi Password" onkeyup="tis()"
-                                            required>
+                                        <input type="password"
+                                            class="form-control @error('password_confirmation') is-invalid @enderror"
+                                            name="password_confirmation" id="password"
+                                            placeholder="Masukkan Konfirmasi Password" onkeyup="tis()" required>
                                         <div class="invalid-feedback">
                                             Harap isi dengan benar
                                         </div>
@@ -72,34 +73,9 @@
                             </form>
                         </div>
                     </div>
-
                 </div>
-
             </div>
             <!--Row-->
-
-        </div>
-
-        <!-- Modal Logout -->
-        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelLogout"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabelLogout">Ohh No!</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to logout?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
-                        <a href="login.html" class="btn btn-primary">Logout</a>
-                    </div>
-                </div>
-            </div>
         </div>
     @endsection
     @push('js')
@@ -114,9 +90,12 @@
                     $('#name').attr('class', 'form-control');
                 }
             }
+
             function tes() {
                 var input = $('#email').val()
-                if (input == "" ||  /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input)) {
+                if (input == "" ||
+                    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+                    .test(input)) {
                     $('#email').attr('class', 'form-control is-invalid');
                     $('#email').val("");
 
@@ -124,6 +103,7 @@
                     $('#email').attr('class', 'form-control');
                 }
             }
+
             function tos() {
                 var input = $('#password').val()
                 if (input == "") {
@@ -134,6 +114,7 @@
                     $('#password').attr('class', 'form-control');
                 }
             }
+
             function tis() {
                 var input = $('input[name="password_confirmation"]').val()
                 if (input == "") {

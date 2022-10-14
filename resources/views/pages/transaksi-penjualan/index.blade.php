@@ -5,11 +5,11 @@
     @section('content')
         <div class="container-fluid" id="container-wrapper">
             <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                <h1 class="h3 mb-0 text-gray-800">Barang</h1>
+                <h1 class="h3 mb-0 text-gray-800">Transaksi</h1>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
-                    <li class="breadcrumb-item">Master</li>
-                    <li class="breadcrumb-item active" aria-current="page">Barang</li>
+                    <li class="breadcrumb-item">Transaksi</li>
+                    <li class="breadcrumb-item active" aria-current="page">Penjualan</li>
                 </ol>
             </div>
 
@@ -19,8 +19,8 @@
                 <div class="col-lg-12">
                     <div class="card mb-4">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Data Barang</h6>
-                            <a href="{{ route('barang.create') }}" class="btn btn-primary btn-icon-split btn-sm">
+                            <h6 class="m-0 font-weight-bold text-primary">Data Penjualan</h6>
+                            <a href="{{ route('penjualan.create') }}" class="btn btn-primary btn-icon-split btn-sm">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-plus"></i>
                                 </span>
@@ -43,27 +43,42 @@
                                         <tr>
                                             <th>No.</th>
                                             <th>Nama Barang</th>
+                                            <th>Bulan</th>
+                                            <th>Qty</th>
                                             <th>Satuan</th>
+                                            <th>Harga</th>
+                                            <th>Total Harga</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($barang as $item)
+                                        @foreach ($penjualan as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->nama }}</td>
                                                 @php
-                                                    $satuan = \App\Models\Satuan::select('satuan')
-                                                        ->where('id', $item->id_satuan)
+                                                    $barang = \App\Models\Barang::select('nama', 'id_satuan')
+                                                        ->where('id', $item->id_barang)
                                                         ->get();
                                                 @endphp
-                                                @foreach ($satuan as $itemSatuan)
-                                                    <td>{{ $itemSatuan->satuan }}</td>
+                                                @foreach ($barang as $itembarang)
+                                                    <td>{{ $itembarang->nama }}</td>
+                                                    <td>{{ $item->bulan . '-' . $item->tahun }}</td>
+                                                    <td>{{ $item->qty }}</td>
+                                                    @php
+                                                        $satuan = \App\Models\Satuan::select('satuan')
+                                                            ->where('id', $itembarang->id_satuan)
+                                                            ->get();
+                                                    @endphp
+                                                    @foreach ($satuan as $itemsatuan)
+                                                        <td>{{ $itemsatuan->satuan }}</td>
+                                                    @endforeach
                                                 @endforeach
+                                                <td>Rp{{ number_format($item->harga, 2, ',', '.') }}</td>
+                                                <td>Rp{{ number_format($item->total_harga, 2, ',', '.') }}</td>
                                                 <td>
                                                     <div class="d-flex">
                                                         <div>
-                                                            <a href="{{ route('barang.edit', $item->id) }}"
+                                                            <a href="{{ route('penjualan.edit', $item->id) }}"
                                                                 class="btn btn-warning btn-sm mr-2" title="Edit"
                                                                 data-toggle="tooltip">
                                                                 <i class="fas fa-pen"></i>
@@ -124,7 +139,7 @@
         <script>
             function hapusModal(id) {
                 // console.log(id);
-                var url = "{{ url('/master/barang') }}/" + id;
+                var url = "{{ url('/transaksi/penjualan') }}/" + id;
                 // console.log(url);
                 $('#exampleModalCenter').modal('show');
                 $('#delete_form').attr('action', url);

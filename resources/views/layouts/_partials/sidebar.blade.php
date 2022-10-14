@@ -15,17 +15,13 @@
     <div class="sidebar-heading">
         Features
     </div>
-    @php
-        $menu = ['satuan', 'barang', 'user'];
-    @endphp
-    {{-- {{in_array(request()->segment(2), $menu)}} --}}
-    <li class="nav-item @if (in_array(request()->segment(2), $menu)) active @endif">
+    <li class="nav-item {{ request()->segment(1) == 'master' ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrap"
             aria-expanded="true" aria-controls="collapseBootstrap">
             <i class="far fa-fw fa-window-maximize"></i>
             <span>Master</span>
         </a>
-        <div id="collapseBootstrap" class="collapse @if (in_array(request()->segment(2), $menu)) show @endif"
+        <div id="collapseBootstrap" class="collapse {{ request()->segment(1) == 'master' ? 'show' : '' }}"
             aria-labelledby="headingBootstrap" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Master</h6>
@@ -38,17 +34,20 @@
             </div>
         </div>
     </li>
-    <li class="nav-item">
+    <li class="nav-item {{ request()->segment(1) == 'transaksi' ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseForm"
             aria-expanded="true" aria-controls="collapseForm">
             <i class="fab fa-fw fa-wpforms"></i>
             <span>Transaksi</span>
         </a>
-        <div id="collapseForm" class="collapse" aria-labelledby="headingForm" data-parent="#accordionSidebar">
+        <div id="collapseForm" class="collapse {{ request()->segment(1) == 'transaksi' ? 'show' : '' }}"
+            aria-labelledby="headingForm" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Transaksi</h6>
-                <a class="collapse-item" href="form_basics.html">Penjualan</a>
-                <a class="collapse-item" href="form_advanceds.html">Purchase Order</a>
+                <a class="collapse-item {{ request()->segment(2) == 'penjualan' ? 'active' : '' }}"
+                    href="{{ route('penjualan.index') }}">Penjualan</a>
+                <a class="collapse-item {{ request()->segment(2) == 'purchase-order' ? 'active' : '' }}"
+                    href="{{ route('purchase-order.index') }}">Purchase Order</a>
                 <a class="collapse-item" href="form_advanceds.html">Profit</a>
             </div>
         </div>

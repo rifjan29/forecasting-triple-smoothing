@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TransaksiPenjualanController;
+use App\Http\Controllers\TransaksiPurchaseOrderController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -16,28 +19,22 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::get('/', function () {
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {return view('dashboard');})->name('dashboard');
+
+    Route::get('/', function () {
     return view('dashboard');
+    });
+    Route::resource('master/satuan',SatuanController::class);
+
+    Route::resource('master/barang',BarangController::class);
+
+    Route::resource('master/user',UserController::class);
+
+    Route::resource('transaksi/penjualan',TransaksiPenjualanController::class);
+
+    Route::resource('transaksi/purchase-order',TransaksiPurchaseOrderController::class);
+
 });
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
-Route::resource('master/satuan',SatuanController::class);
-
-Route::resource('master/barang',BarangController::class);
-
-Route::resource('master/user',UserController::class);
-
-// Route::middleware(['auth'])->group(function () {
-//     Route::prefix('administrator')->group(function () {
-//         Route::get('/',[HomeController::class,'index'])->name('home');
-
-
-
-
-//     });
-// });
 
 require __DIR__.'/auth.php';

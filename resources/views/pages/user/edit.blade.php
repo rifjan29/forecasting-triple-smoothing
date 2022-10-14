@@ -35,8 +35,8 @@
                                     <div class="form-group">
                                         <label for="name">Nama</label>
                                         <input type="text" class="form-control @error('name') is-invalid @enderror"
-                                            name="name" id="name" placeholder="Masukkan Nama" value="{{$users->name}}" onkeyup="tas()"
-                                            required>
+                                            name="name" id="name" placeholder="Masukkan Nama"
+                                            value="{{ $users->name }}" onkeyup="tas()" required>
                                         <div class="invalid-feedback">
                                             Harap isi dengan benar
                                         </div>
@@ -44,8 +44,8 @@
                                     <div class="form-group">
                                         <label for="email">Email</label>
                                         <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                            name="email" id="email" placeholder="Masukkan Email" value="{{$users->email}}" onkeyup="tes()"
-                                            required>
+                                            name="email" id="email" placeholder="Masukkan Email"
+                                            value="{{ $users->email }}" onkeyup="tes()" required>
                                         <div class="invalid-feedback">
                                             Harap isi dengan benar
                                         </div>
@@ -53,17 +53,17 @@
                                     <div class="form-group">
                                         <label for="password">Password</label>
                                         <input type="password" class="form-control @error('password') is-invalid @enderror"
-                                            name="password" id="password" placeholder="Masukkan Password"
-                                            >
+                                            name="password" id="password" placeholder="Masukkan Password">
                                         <div class="invalid-feedback">
                                             Harap isi dengan benar
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="password">Konfirmasi Password</label>
-                                        <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
-                                            name="password_confirmation" id="password" placeholder="Masukkan Konfirmasi Password"
-                                            >
+                                        <input type="password"
+                                            class="form-control @error('password_confirmation') is-invalid @enderror"
+                                            name="password_confirmation" id="password"
+                                            placeholder="Masukkan Konfirmasi Password">
                                         <div class="invalid-feedback">
                                             Harap isi dengan benar
                                         </div>
@@ -80,28 +80,6 @@
             <!--Row-->
 
         </div>
-
-        <!-- Modal Logout -->
-        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelLogout"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabelLogout">Ohh No!</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Are you sure you want to logout?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Cancel</button>
-                        <a href="login.html" class="btn btn-primary">Logout</a>
-                    </div>
-                </div>
-            </div>
-        </div>
     @endsection
     @push('js')
         <script>
@@ -115,9 +93,12 @@
                     $('#name').attr('class', 'form-control');
                 }
             }
+
             function tes() {
                 var input = $('#email').val()
-                if (input == "" ||  /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(input)) {
+                if (input == "" ||
+                    /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+                    .test(input)) {
                     $('#email').attr('class', 'form-control is-invalid');
                     $('#email').val("");
 
