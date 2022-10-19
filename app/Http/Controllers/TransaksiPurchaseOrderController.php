@@ -54,6 +54,39 @@ class TransaksiPurchaseOrderController extends Controller
         $id_barang = $barang[0];
         $nama = $barang[1];
 
+        $barangSudahAda = Transaksi::where('kategori',$kategori)
+                                ->where('bulan', $month)
+                                ->where('tahun', $year)
+                                ->where('id_barang',$request->id_barang)
+                                ->first();
+
+        $penjualanSudahAda = Transaksi::where('kategori','Penjualan')
+                                    ->where('bulan', $month)
+                                    ->where('tahun', $year)
+                                    ->where('id_barang',$request->id_barang)
+                                    ->first();
+
+        $qtyFormat = (int)$request->qty;
+        $qtyKurang = Transaksi::where('kategori','Penjualan')
+                            ->where('bulan', $month)
+                            ->where('tahun', $year)
+                            ->where('id_barang',$request->id_barang)
+                            ->where('qty','<=',$qtyFormat)
+                            ->first();
+
+        $hargaBeli = (int)$request->harga;
+        $hargaLebih = Transaksi::where('kategori','Penjualan')
+                            ->where('bulan', $month)
+                            ->where('tahun', $year)
+                            ->where('id_barang',$request->id_barang)
+                            ->where('harga','>=',$hargaBeli)
+                            ->first();
+
+        $profitExists = Transaksi::where('kategori','Profit')
+                                ->where('id_barang', $request->id_barang)
+                                ->where('bulan', $month)
+                                ->where('tahun', $year)
+                                ->first();
 
         $request->validate(
             [
@@ -79,21 +112,91 @@ class TransaksiPurchaseOrderController extends Controller
         );
 
         try {
-            $barangSudahAda = Transaksi::where('kategori',$kategori)->where('bulan', $month)->where('tahun', $year)->where('id_barang',$request->id_barang)->first();
+
             if($barangSudahAda) {
                 return back()->withError('Barang '.$nama .' telah diinputkan pada bulan '.$month.' dan tahun '.$year);
             }
             else {
-                $newTransaksiPurchaseOrder = new Transaksi;
-                $newTransaksiPurchaseOrder->id_barang = $id_barang;
-                $newTransaksiPurchaseOrder->qty = $request->qty;
-                $newTransaksiPurchaseOrder->harga = $request->harga;
-                $newTransaksiPurchaseOrder->total_harga = $request->total_harga;
-                $newTransaksiPurchaseOrder->bulan = $month;
-                $newTransaksiPurchaseOrder->tahun = $year;
-                $newTransaksiPurchaseOrder->kategori = $kategori;
 
-                $newTransaksiPurchaseOrder->save();
+                if($penjualanSudahAda) {
+
+                    if($qtyKurang) {
+
+                        if(!$hargaLebih) {
+                            return back()->withError('Barang '.$nama .' wajib diisi dengan harga kurang dari harga Penjualan atau lebih kecil dari Rp. '.number_format($hargaLebih->harga, 2, ',', '.'));
+                        } else {
+                            if($profitExists) {
+                                $profitExists->harga = $penjualanSudahAda->harga-$request->harga;
+                                $profitExists->total_harga = $profitExists->harga*$profitExists->qty;
+                                $profitExists->kategori = 'Profit';
+
+                                $profitExists->save();
+
+                            } else {
+                                $newTransaksiProfit = new Transaksi;
+                                $newTransaksiProfit->id_barang = $id_barang;
+                                $newTransaksiProfit->qty = $request->qty;
+                                $newTransaksiProfit->harga = $penjualanSudahAda->harga-$request->harga;
+                                $newTransaksiProfit->total_harga = $newTransaksiProfit->harga*$newTransaksiProfit->qty;
+                                $newTransaksiProfit->bulan = $month;
+                                $newTransaksiProfit->tahun = $year;
+                                $newTransaksiProfit->kategori = 'Profit';
+
+                                $newTransaksiProfit->save();
+                            }
+
+                            $newTransaksiPurchaseOrder = new Transaksi;
+                            $newTransaksiPurchaseOrder->id_barang = $id_barang;
+                            $newTransaksiPurchaseOrder->qty = $request->qty;
+                            $newTransaksiPurchaseOrder->harga = $request->harga;
+                            $newTransaksiPurchaseOrder->total_harga = $request->total_harga;
+                            $newTransaksiPurchaseOrder->bulan = $month;
+                            $newTransaksiPurchaseOrder->tahun = $year;
+                            $newTransaksiPurchaseOrder->kategori = $kategori;
+
+                            $newTransaksiPurchaseOrder->save();
+                        }
+                    } else {
+                        return back()->withError('Barang '.$nama .' wajib di isi dengan qty diatas '.$penjualanSudahAda->qty.' atau sama dengan Penjualan sebanyak '.$penjualanSudahAda->qty);
+                    }
+                }
+                else{
+
+                    $newTransaksiPurchaseOrder = new Transaksi;
+                    $newTransaksiPurchaseOrder->id_barang = $id_barang;
+                    $newTransaksiPurchaseOrder->qty = $request->qty;
+                    $newTransaksiPurchaseOrder->harga = $request->harga;
+                    $newTransaksiPurchaseOrder->total_harga = $request->total_harga;
+                    $newTransaksiPurchaseOrder->bulan = $month;
+                    $newTransaksiPurchaseOrder->tahun = $year;
+                    $newTransaksiPurchaseOrder->kategori = $kategori;
+
+                    $newTransaksiPurchaseOrder->save();
+
+                    if(!$profitExists) {
+                        $newTransaksiProfit = new Transaksi;
+                        $newTransaksiProfit->id_barang = $id_barang;
+                        $newTransaksiProfit->qty = $request->qty;
+                        $newTransaksiProfit->harga = $request->harga;
+                        $newTransaksiProfit->total_harga = $newTransaksiProfit->harga*$newTransaksiProfit->qty;
+                        $newTransaksiProfit->bulan = $month;
+                        $newTransaksiProfit->tahun = $year;
+                        $newTransaksiProfit->kategori = 'Profit';
+
+                        $newTransaksiProfit->save();
+                    } else {
+                        $profitExists->id_barang = $id_barang;
+                        $profitExists->qty = $request->qty;
+                        $profitExists->harga = $request->harga-$penjualanSudahAda->harga;
+                        $profitExists->bulan = $month;
+                        $profitExists->tahun = $year;
+                        $profitExists->total_harga = $profitExists->harga*$profitExists->qty;
+                        $profitExists->kategori = 'Profit';
+
+                        $profitExists->save();
+                    }
+
+                }
 
                 return redirect('transaksi/purchase-order')->withStatus('Berhasil menyimpan data.');
             }
@@ -182,22 +285,90 @@ class TransaksiPurchaseOrderController extends Controller
             */
         try {
             $updateTransaksiPurchaseOrder = Transaksi::find($id);
+            $updateTransaksiProfit = Transaksi::where('kategori','Profit')
+                                            ->where('bulan', $updateTransaksiPurchaseOrder->bulan)
+                                            ->where('tahun', $updateTransaksiPurchaseOrder->tahun)
+                                            ->where('id_barang',$updateTransaksiPurchaseOrder->id_barang)
+                                            ->first();
+
+            $penjualanSudahAda = Transaksi::where('kategori','Penjualan')
+                                            ->where('bulan', $updateTransaksiPurchaseOrder->bulan)
+                                            ->where('tahun', $updateTransaksiPurchaseOrder->tahun)
+                                            ->where('id_barang',$updateTransaksiPurchaseOrder->id_barang)
+                                            ->first();
+
+            $qtyFormat = (int)$request->qty;
+            $qtyKurang = Transaksi::where('kategori','Penjualan')
+                                ->where('bulan', $updateTransaksiPurchaseOrder->bulan)
+                                ->where('tahun', $updateTransaksiPurchaseOrder->tahun)
+                                ->where('id_barang',$updateTransaksiPurchaseOrder->id_barang)
+                                ->where('qty','<=',$qtyFormat)
+                                ->first();
+
+            $hargaBeli = (int)$request->harga;
+            $hargaLebih = Transaksi::where('kategori','Penjualan')
+                                    ->where('bulan', $updateTransaksiPurchaseOrder->bulan)
+                                    ->where('tahun', $updateTransaksiPurchaseOrder->tahun)
+                                    ->where('id_barang',$updateTransaksiPurchaseOrder->id_barang)
+                                    ->where('harga','>=',$hargaBeli)
+                                    ->first();
+
+            $profitExists = Transaksi::where('kategori','Profit')
+                    ->where('id_barang', $id_barang)
+                    ->where('bulan', $month)
+                    ->where('tahun', $year)
+                    ->first();
 
             if ($id_barang != $updateTransaksiPurchaseOrder->id_barang) {
-                $exists = Transaksi::where('id_barang', $id_barang)->where('bulan', $month)->where('tahun', $year)->first();
+                $exists = Transaksi::where('kategori','Purchase Order')
+                                ->where('id_barang', $id_barang)
+                                ->where('bulan', $month)
+                                ->where('tahun', $year)
+                                ->first();
                 if ($exists)
                     return back()->withError('Terdapat barang pada bulan '.$month.' tahun '.$year);
                 else {
                     $updateTransaksiPurchaseOrder->id_barang = $id_barang;
+
+                    if(!$profitExists) {
+                        $updateTransaksiProfit->id_barang = $id_barang;
+
+                        $penjualanBaru = Transaksi::where('kategori','Penjualan')
+                                            ->where('bulan', $month)
+                                            ->where('tahun', $year)
+                                            ->where('id_barang',$id_barang)
+                                            ->first();
+
+                        if ($penjualanSudahAda) {
+                            $updateTransaksiProfit->harga = $request->harga;
+                            $updateTransaksiProfit->total_harga = $request->qty*$updateTransaksiProfit->harga;
+
+                        } if($penjualanBaru) {
+                            $updateTransaksiProfit->harga = $request->harga-$penjualanBaru->harga;
+                            $updateTransaksiProfit->total_harga = $request->qty*$updateTransaksiProfit->harga;
+                        }
+                    }
                 }
             } if ($request->qty != $updateTransaksiPurchaseOrder->qty) {
-                $updateTransaksiPurchaseOrder->qty = $request->qty;
+                if(!$qtyKurang) {
+                    return back()->withError('Barang '.$nama .' wajib di isi dengan qty diatas atau lebih dari sama dengan Penjualan sebanyak '.$penjualanSudahAda->qty);
+                } else {
+                    $updateTransaksiPurchaseOrder->qty = $request->qty;
+                    $updateTransaksiProfit->qty = $request->qty;
+                }
             } if ($request->harga != $updateTransaksiPurchaseOrder->harga) {
-                $updateTransaksiPurchaseOrder->harga = $request->harga;
+                if(!$hargaLebih){
+                    return back()->withError('Barang '.$nama .' wajib diisi dengan harga kurang dari harga Penjualan atau lebih kecil dari Rp. '.number_format($hargaLebih->harga, 2, ',', '.'));
+                } else {
+                    $updateTransaksiPurchaseOrder->harga = $request->harga;
+                    $updateTransaksiProfit->harga = $request->harga-$penjualanSudahAda->harga;
+                }
             } if ($request->total_harga != $updateTransaksiPurchaseOrder->total_harga) {
                 $updateTransaksiPurchaseOrder->total_harga = $request->total_harga;
+                $updateTransaksiProfit->total_harga = $request->qty*$updateTransaksiProfit->harga;
             } if ($month != $updateTransaksiPurchaseOrder->bulan || $year != $updateTransaksiPurchaseOrder->tahun) {
                 $exists = Transaksi::where('id_barang', $id_barang)
+                                    ->where('kategori', 'Purchase Order')
                                     ->where('bulan', $month)
                                     ->where('tahun', $year)
                                     ->first();
@@ -206,10 +377,13 @@ class TransaksiPurchaseOrderController extends Controller
                 else {
                     $updateTransaksiPurchaseOrder->bulan = $month;
                     $updateTransaksiPurchaseOrder->tahun = $year;
+                    $updateTransaksiProfit->bulan = $month;
+                    $updateTransaksiProfit->tahun = $year;
                 }
             }
 
             $updateTransaksiPurchaseOrder->save();
+            $updateTransaksiProfit->save();
 
             return redirect('transaksi/purchase-order')->withSukses('Berhasil menyimpan data.');
 
@@ -231,8 +405,35 @@ class TransaksiPurchaseOrderController extends Controller
     public function destroy($id)
         {
          try {
-            Transaksi::find($id)->delete();
+            $deleteTransaksiPurchaseOrder = Transaksi::find($id);
 
+            $updateFromPenjualan = Transaksi::where('kategori','Penjualan')
+                                            ->where('bulan', $deleteTransaksiPurchaseOrder->bulan)
+                                            ->where('tahun', $deleteTransaksiPurchaseOrder->tahun)
+                                            ->where('id_barang',$deleteTransaksiPurchaseOrder->id_barang)
+                                            ->first();
+
+            $deleteTransaksiProfit = Transaksi::where('kategori','Profit')
+                                                ->where('bulan', $deleteTransaksiPurchaseOrder->bulan)
+                                                ->where('tahun', $deleteTransaksiPurchaseOrder->tahun)
+                                                ->where('id_barang',$deleteTransaksiPurchaseOrder->id_barang)
+                                                ->first();
+
+            if($updateFromPenjualan) {
+                $deleteTransaksiProfit->id_barang = $updateFromPenjualan->id_barang;
+                $deleteTransaksiProfit->qty = $updateFromPenjualan->qty;
+                $deleteTransaksiProfit->harga = -$updateFromPenjualan->harga;
+                $deleteTransaksiProfit->total_harga = -$updateFromPenjualan->total_harga;
+                $deleteTransaksiProfit->bulan = $updateFromPenjualan->bulan;
+                $deleteTransaksiProfit->tahun = $updateFromPenjualan->tahun;
+                $deleteTransaksiProfit->kategori = 'Profit';
+
+                $deleteTransaksiProfit->save();
+            } else {
+                $deleteTransaksiProfit->delete();
+            }
+
+            $deleteTransaksiPurchaseOrder->delete();
             return redirect()->back()->withWarning('Berhasil menghapus data.');
         }
         catch(\Exception $e){

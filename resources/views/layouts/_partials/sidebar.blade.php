@@ -44,11 +44,12 @@
             aria-labelledby="headingForm" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Transaksi</h6>
-                <a class="collapse-item {{ request()->segment(2) == 'penjualan' ? 'active' : '' }}"
-                    href="{{ route('penjualan.index') }}">Penjualan</a>
                 <a class="collapse-item {{ request()->segment(2) == 'purchase-order' ? 'active' : '' }}"
                     href="{{ route('purchase-order.index') }}">Purchase Order</a>
-                <a class="collapse-item" href="form_advanceds.html">Profit</a>
+                <a class="collapse-item {{ request()->segment(2) == 'penjualan' ? 'active' : '' }}"
+                    href="{{ route('penjualan.index') }}">Penjualan</a>
+                <a class="collapse-item {{ request()->segment(2) == 'profit' ? 'active' : '' }}"
+                    href="{{ route('profit.index') }}">Profit</a>
             </div>
         </div>
     </li>

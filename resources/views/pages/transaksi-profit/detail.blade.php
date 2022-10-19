@@ -9,7 +9,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">Home</a></li>
                     <li class="breadcrumb-item">Transaksi</li>
-                    <li class="breadcrumb-item active" aria-current="page">Profit</li>
+                    <li class="breadcrumb-item active" aria-current="page">Detail</li>
                 </ol>
             </div>
 
@@ -37,43 +37,37 @@
                                         <tr>
                                             <th>No.</th>
                                             <th>Nama Barang</th>
+                                            <th>Bulan</th>
+                                            <th>Qty</th>
                                             <th>Satuan</th>
-                                            <th>Total Penjualan</th>
-                                            <th>Total Purchase Order</th>
+                                            <th>Profit</th>
                                             <th>Total Profit</th>
-                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($profit as $item)
+                                        @foreach ($transaksi as $item)
                                             <tr>
                                                 <td>{{ $loop->iteration }}</td>
-                                                <td>{{ $item->nama }}</td>
                                                 @php
-                                                    $satuan = \App\Models\Satuan::select('satuan')
-                                                        ->where('id', $item->id_satuan)
+                                                    $barang = \App\Models\Barang::select('nama', 'id_satuan')
+                                                        ->where('id', $item->id_barang)
                                                         ->get();
                                                 @endphp
-                                                @foreach ($satuan as $itemsatuan)
-                                                    <td>{{ $itemsatuan->satuan }}</td>
+                                                @foreach ($barang as $itembarang)
+                                                    <td>{{ $itembarang->nama }}</td>
+                                                    <td>{{ $item->bulan . '-' . $item->tahun }}</td>
+                                                    <td>{{ $item->qty }}</td>
+                                                    @php
+                                                        $satuan = \App\Models\Satuan::select('satuan')
+                                                            ->where('id', $itembarang->id_satuan)
+                                                            ->get();
+                                                    @endphp
+                                                    @foreach ($satuan as $itemsatuan)
+                                                        <td>{{ $itemsatuan->satuan }}</td>
+                                                    @endforeach
                                                 @endforeach
-                                                <td>Rp {{ number_format($item->total_penjualan, 2, ',', '.') }}</td>
-                                                <td>Rp {{ number_format($item->total_pembelian, 2, ',', '.') }}</td>
-                                                <td>Rp
-                                                    {{ number_format($item->total_keuntungan, 2, ',', '.') }}
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex">
-                                                        <div>
-                                                            <a href="{{ route('profit.show', $item->id) }}"
-                                                                class="btn btn-info btn-sm mr-2" title="Detail"
-                                                                data-toggle="tooltip">
-                                                                <i class="fas fa-info-circle"></i>
-                                                                <span class="align-middle"></span>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </td>
+                                                <td>Rp{{ number_format($item->harga, 2, ',', '.') }}</td>
+                                                <td>Rp{{ number_format($item->total_harga, 2, ',', '.') }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>

@@ -18,11 +18,27 @@ class TransaksiProfitController extends Controller
     public function index()
     {
         $barang = Barang::all();
-        $totalPenjualan = 0;
-        $totalPembelian = 0;
+        foreach ($barang as $key => $value) {
+            $penjualan = Transaksi::select(\DB::raw("SUM(total_harga) AS total"))
+                                ->where('id_barang', $value->id)
+                                ->where('kategori', 'Penjualan')
+                                ->first();
+            $pembelian = Transaksi::select(\DB::raw("SUM(total_harga) AS total"))
+                                ->where('id_barang', $value->id)
+                                ->where('kategori', 'Purchase Order')
+                                ->first();
+            $keuntungan = Transaksi::select(\DB::raw("SUM(total_harga) AS total"))
+                                ->where('id_barang', $value->id)
+                                ->where('kategori', 'Profit')
+                                ->first();
+            $value->total_penjualan = is_null($penjualan->total) ? 0 : $penjualan->total;
+            $value->total_pembelian = is_null($pembelian->total) ? 0 : $pembelian->total;
+            $value->total_keuntungan = is_null($keuntungan->total) ? 0 : $keuntungan->total;
 
-        foreach ($barang as $dataBarang)
-        return view('pages.transaksi-purchase-order.index')->with('purchaseOrder', $transaksiPurchaseOrder)->with('i',(request()->input('page',1)-1)*5);
+        }
+
+        // return $barang;
+        return view('pages.transaksi-profit.index')->with('profit', $barang)->with('i',(request()->input('page',1)-1)*5);
     }
 
     /**
@@ -54,7 +70,22 @@ class TransaksiProfitController extends Controller
      */
     public function show($id)
     {
-        //
+        try{
+
+            $this->param['transaksi'] = Transaksi::where('kategori','Profit')->where('id_barang',$id)->get();
+
+            $this->param['id_barang'] = Barang::all();
+
+            $this->param['id_satuan'] = Satuan::all();
+
+            return view('pages.transaksi-profit.detail',$this->param);
+        }
+        catch(\Exception $e){
+            return redirect()->back()->withError('Mohon maaf data masih belum terisi');
+        }
+        catch(\Illuminate\Database\QueryException $e){
+            return redirect()->back()->withError($e->getMessage());
+        }
     }
 
     /**

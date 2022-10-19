@@ -39,7 +39,7 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="id_barang">Nama Barang</label>
-                                        <select name="id_barang" id="id_barang" onchange="pilih()"
+                                        <select name="id_barang" id="id_barang"
                                             class="id_barang form-control py-3 @error('id_barang') is-invalid @enderror"
                                             required>
                                             <option value="0">Pilih Nama Barang</option>
@@ -144,15 +144,14 @@
                 }
             }
 
-            function pilih() {
-                var input = $('#id_satuan').val()
-                if (input == "0" || input == null) {
-                    $('#id_satuan').attr('class', 'form-control is-invalid');
-                    $('#id_satuan').val("");
-                } else {
-                    $('#id_satuan').attr('class', 'form-control');
-                }
-            }
+            // function pilih() {
+            //     var input = $('#id_barang').val()
+            //     if (input == 0 || input == null || input == 'default') {
+            //         $('#id_barang').attr('class', 'id_barang form-control py-3 is-invalid');
+            //     } else {
+            //         $('#id_barang').attr('class', 'id_barang form-control py-3');
+            //     }
+            // }
         </script>
     @endpush
 </x-app-layout>

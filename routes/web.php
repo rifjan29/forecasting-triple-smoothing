@@ -6,6 +6,7 @@ use App\Http\Controllers\BarangController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TransaksiPenjualanController;
 use App\Http\Controllers\TransaksiPurchaseOrderController;
+use App\Http\Controllers\TransaksiProfitController;
 
 
 /*
@@ -34,6 +35,8 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('transaksi/penjualan',TransaksiPenjualanController::class);
 
     Route::resource('transaksi/purchase-order',TransaksiPurchaseOrderController::class);
+
+    Route::resource('transaksi/profit', TransaksiProfitController::class);
 
 });
 
