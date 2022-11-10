@@ -1,6 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SatuanController;
+use App\Http\Controllers\BarangController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\TransaksiPenjualanController;
+use App\Http\Controllers\TransaksiPurchaseOrderController;
+use App\Http\Controllers\TransaksiProfitController;
+use App\Http\Controllers\ForecastingPurchaseOrderController;
+use App\Http\Controllers\ForecastingProfitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,12 +21,31 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('dashboard');
-});
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+    Route::get('/', function () {
+        return view('dashboard');
+    });
+
+    Route::resource('master/satuan',SatuanController::class);
+
+    Route::resource('master/barang',BarangController::class);
+
+    Route::resource('master/user',UserController::class);
+
+    Route::resource('transaksi/penjualan',TransaksiPenjualanController::class);
+
+    Route::resource('transaksi/purchase-order',TransaksiPurchaseOrderController::class);
+
+    Route::resource('transaksi/profit', TransaksiProfitController::class);
+
+    Route::resource('peramalan/forecast-purchase-order', ForecastingPurchaseOrderController::class);
+
+    Route::resource('peramalan/forecast-profit', ForecastingProfitController::class);
+
+});
 
 require __DIR__.'/auth.php';
