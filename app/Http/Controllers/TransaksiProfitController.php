@@ -72,7 +72,11 @@ class TransaksiProfitController extends Controller
     {
         try{
 
-            $this->param['transaksi'] = Transaksi::where('kategori','Profit')->where('id_barang',$id)->get();
+            $this->param['transaksi'] = Transaksi::where('kategori','Profit')
+                                                ->where('id_barang',$id)
+                                                ->orderBy('tahun', 'ASC')
+                                                ->orderBy('bulan', 'ASC')
+                                                ->get();
 
             $this->param['id_barang'] = Barang::all();
 

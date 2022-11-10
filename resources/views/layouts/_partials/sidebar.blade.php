@@ -69,11 +69,22 @@
             </div>
         </div>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="ui-colors.html">
+    <li class="nav-item {{ request()->segment(1) == 'peramalan' ? 'active' : '' }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePage"
+            aria-expanded="true" aria-controls="collapsePage">
             <i class="fas fa-fw fa-palette"></i>
             <span>Peramalan</span>
         </a>
+        <div id="collapsePage" class="collapse {{ request()->segment(1) == 'peramalan' ? 'show' : '' }}"
+            aria-labelledby="headingPage" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Peramalan</h6>
+                <a class="collapse-item {{ request()->segment(2) == 'forecast-purchase-order' ? 'active' : '' }}"
+                    href="{{ route('forecast-purchase-order.index') }}">Purchase Order</a>
+                <a class="collapse-item {{ request()->segment(2) == 'forecast-profit' ? 'active' : '' }}"
+                    href="{{ route('forecast-profit.index') }}">Profit</a>
+            </div>
+        </div>
     </li>
     <hr class="sidebar-divider">
     <div class="version" id="version-ruangadmin"></div>

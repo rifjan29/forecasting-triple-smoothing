@@ -7,7 +7,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TransaksiPenjualanController;
 use App\Http\Controllers\TransaksiPurchaseOrderController;
 use App\Http\Controllers\TransaksiProfitController;
-
+use App\Http\Controllers\ForecastingPurchaseOrderController;
+use App\Http\Controllers\ForecastingProfitController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,11 +22,14 @@ use App\Http\Controllers\TransaksiProfitController;
 */
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {return view('dashboard');})->name('dashboard');
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
     Route::get('/', function () {
-    return view('dashboard');
+        return view('dashboard');
     });
+
     Route::resource('master/satuan',SatuanController::class);
 
     Route::resource('master/barang',BarangController::class);
@@ -37,6 +41,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('transaksi/purchase-order',TransaksiPurchaseOrderController::class);
 
     Route::resource('transaksi/profit', TransaksiProfitController::class);
+
+    Route::resource('peramalan/forecast-purchase-order', ForecastingPurchaseOrderController::class);
+
+    Route::resource('peramalan/forecast-profit', ForecastingProfitController::class);
 
 });
 

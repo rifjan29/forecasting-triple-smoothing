@@ -20,7 +20,9 @@ class TransaksiPenjualanController extends Controller
     public function index()
     {
         $transaksiPenjualan = Transaksi::where('kategori','=','Penjualan')
-                                        ->get();
+                                    ->orderBy('tahun', 'ASC')
+                                    ->orderBy('bulan', 'ASC')
+                                    ->get();
         return view('pages.transaksi-penjualan.index')
             ->with('penjualan', $transaksiPenjualan)
             ->with('i',(request()
@@ -351,19 +353,29 @@ class TransaksiPenjualanController extends Controller
                     }
                 }
             } if ($request->qty != $updateTransaksiPenjualan->qty) {
-                if(!$qtyLebih) {
-                    return back()->withError('Barang '.$nama .' wajib di isi dengan qty dibawah atau sama dengan Purchase Order sebanyak '.$purchaseOrderSudahAda->qty);
-                }
-                else{
+                if($purchaseOrderSudahAda) {
+                    if(!$qtyLebih) {
+                        return back()->withError('Barang '.$nama .' wajib di isi dengan qty dibawah atau sama dengan Purchase Order sebanyak '.$purchaseOrderSudahAda->qty);
+                    }
+                    else{
+                        $updateTransaksiPenjualan->qty = $request->qty;
+                        $updateTransaksiProfit->qty = $request->qty;
+                    }
+                } else {
                     $updateTransaksiPenjualan->qty = $request->qty;
                     $updateTransaksiProfit->qty = $request->qty;
                 }
             } if ($request->harga != $updateTransaksiPenjualan->harga) {
-                if(!$hargaKurang){
-                    return back()->withError('Barang '.$nama .' wajib diisi dengan harga lebih dari harga Purchase Order atau lebih besar dari Rp. '.number_format($hargaKurang->harga, 2, ',', '.'));
-                } else{
+                if($purchaseOrderSudahAda) {
+                    if(!$hargaKurang){
+                        return back()->withError('Barang '.$nama .' wajib diisi dengan harga lebih dari harga Purchase Order atau lebih besar dari Rp. '.number_format($hargaKurang->harga, 2, ',', '.'));
+                    } else{
+                        $updateTransaksiPenjualan->harga = $request->harga;
+                        $updateTransaksiProfit->harga = $request->harga-$purchaseOrderSudahAda->harga;
+                    }
+                } else {
                     $updateTransaksiPenjualan->harga = $request->harga;
-                    $updateTransaksiProfit->harga = $request->harga-$purchaseOrderSudahAda->harga;
+                    $updateTransaksiProfit->harga = -$request->harga;
                 }
             } if ($request->total_harga != $updateTransaksiPenjualan->total_harga) {
                 $updateTransaksiPenjualan->total_harga = $request->total_harga;
