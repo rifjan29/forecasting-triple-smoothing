@@ -31,7 +31,14 @@
                 <!-- TopBar -->
                 @include('layouts._partials.topbar')
                 <!-- Topbar -->
-                @include('layouts.breadumps')
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @include('layouts.breadumps')
+                        </div>
+                    </div>
+
+                </div>
                 <!-- Container Fluid-->
                 @yield('content')
                 <!---Container Fluid-->

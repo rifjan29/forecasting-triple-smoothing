@@ -49,6 +49,7 @@ class TransaksiPurchaseOrderController extends Controller
      */
     public function store(Request $request)
     {
+
         $kategori = 'Purchase Order';
         $date = explode('-', $request->month);
         $month = $date[1];

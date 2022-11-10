@@ -1,6 +1,12 @@
 <x-app-layout>
     @push('css')
-        <style></style>
+        <style>
+            .select2-container--default .select2-selection--single {
+                border: 1px solid #ced4da;
+                height: calc(2.25rem + 2px);
+                padding: .375rem .75rem;
+            }
+        </style>
     @endpush
     @section('content')
         <div class="container-fluid" id="container-wrapper">
@@ -55,7 +61,8 @@
                                     <div class="form-group col-md-6">
                                         <label for="alpha">Alpha</label>
                                         <input type="text" class="form-control @error('alpha') is-invalid @enderror"
-                                            name="alpha" id="alpha" placeholder="Masukkan alpha" required>
+                                            name="alpha" id="alpha" placeholder="Masukkan alpha" value="{{ old('alpha') }}" required>
+                                        <small>Range : 0 - 1</small>
                                         <div class="invalid-feedback">
                                             Harap isi dengan angka saja
                                         </div>
