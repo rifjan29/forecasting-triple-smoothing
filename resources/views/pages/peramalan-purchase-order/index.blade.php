@@ -61,10 +61,11 @@
                                     <div class="form-group col-md-6">
                                         <label for="alpha">Alpha</label>
                                         <input type="text" class="form-control @error('alpha') is-invalid @enderror"
-                                            name="alpha" id="alpha" placeholder="Masukkan alpha" value="{{ old('alpha') }}" required>
+                                            name="alpha" id="alpha" placeholder="Masukkan alpha" onkeyup="tes()"
+                                            value="{{ old('alpha') }}" required>
                                         <small>Range : 0 - 1</small>
                                         <div class="invalid-feedback">
-                                            Harap isi dengan angka saja
+                                            Harap isi dengan angka antara 0 sampai 1
                                         </div>
                                     </div>
                                     <div class="form-group col-md-6">
@@ -115,12 +116,14 @@
     @endsection
     @push('js')
         <script>
-            function hapusModal(id) {
-                // console.log(id);
-                var url = "{{ url('/transaksi/purchase-order') }}/" + id;
-                // console.log(url);
-                $('#exampleModalCenter').modal('show');
-                $('#delete_form').attr('action', url);
+            function tes() {
+                var input = $('#alpha').val()
+                if (parseFloat(input) < 0.00 || parseFloat(input) >= 1.01 || input == "") {
+                    $('#alpha').attr('class', 'form-control is-invalid');
+                    $('#alpha').val("");
+                } else {
+                    $('#alpha').attr('class', 'form-control');
+                }
             }
         </script>
     @endpush

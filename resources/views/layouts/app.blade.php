@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link href="img/logo/logo.png" rel="icon">
+    <link href="{{ asset('img/logo/logo.png') }}" rel="icon">
     <title>{{ config('app.name', 'Laravel') }}</title>
     <link href="{{ asset('backend/vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
     <link href="{{ asset('backend/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
@@ -104,7 +104,10 @@
     <script src="{{ asset('backend/vendor/select2/dist/js/select2.min.js') }}"></script>
     <!-- Bootstrap Datepicker -->
     <script src="{{ asset('backend/vendor/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
-
+    <!-- Page level custom scripts -->
+    <script src="{{ asset('backend/js/demo/chart-area-demo.js') }}"></script>
+    <script src="{{ asset('backend/js/demo/chart-pie-demo.js') }}"></script>
+    <script src="{{ asset('backend/js/demo/chart-bar-demo.js') }}"></script>
     <!-- Page level custom scripts -->
     <script>
         $(document).ready(function() {

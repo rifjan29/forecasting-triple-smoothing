@@ -18,6 +18,43 @@
                 <!-- DataTable with Hover -->
                 <div class="col-lg-12">
                     <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 align-self-center">
+                                    <div type="button" class="btn btn-primary">
+                                        Alpha <span class="badge badge-light">
+                                            <h5 class="font-weight-bold m-0">{{ $alpha }}</h5>
+                                        </span>
+                                        <span class="sr-only">unread messages</span>
+                                    </div>
+                                    <label></label>
+
+                                </div>
+                                <div class="col-md-4 align-self-center">
+                                    <div type="button" class="btn btn-info">
+                                        Mape <span class="badge badge-light">
+                                            <h5 class="font-weight-bold m-0">{{ $mape }}</h5>
+                                        </span>
+                                        <span class="sr-only">unread messages</span>
+                                    </div>
+                                    <label></label>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="d-flex flex-column">
+                                        <div>
+                                            <small>Peramalan <strong>{{ $get_periode }}</strong> periode pada
+                                                <strong>{{ $periode }}</strong></small>
+                                        </div>
+                                        <div>
+                                            <h4 class="btn btn-warning font-weight-bold">Rp.
+                                                {{ number_format($forecast, 2, ',', '.') }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 class="m-0 font-weight-bold text-primary">Data Profit</h6>
                         </div>
@@ -31,21 +68,7 @@
                                     {{ $message }}
                                 </div>
                             @endif
-                            <div class="form-row">
-                                <div class="form-group col-md-3">
-                                    <label>Alpha</label>
-                                    <label>{{ $alpha }}</label>
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <label>Mape</label>
-                                    <label>{{ $mape }}</label>
-                                </div>
-                                <div class="form-group col-md-6">
-                                    <label>Peramalan {{ $get_periode }} periode pada {{ $periode }}</label>
-                                    <label>Rp{{ number_format($forecast, 2, ',', '.') }}</label>
-                                    <label></label>
-                                </div>
-                            </div>
+
                             <div class="table-responsive p-3">
                                 <table class="table align-items-center table-flush" id="dataTable">
                                     <thead class="thead-light">
@@ -77,6 +100,19 @@
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Area Chart</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="myAreaChart"></canvas>
+                            </div>
+                            <hr>
+                            Styling for the area chart can be found in the
+                            <code>/js/demo/chart-area-demo.js</code> file.
                         </div>
                     </div>
                 </div>

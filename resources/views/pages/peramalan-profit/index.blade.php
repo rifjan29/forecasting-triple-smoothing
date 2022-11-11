@@ -3,9 +3,9 @@
         <style>
             .select2-container--default .select2-selection--single {
                 border: 1px solid #ced4da;
-                    height: calc(2.25rem + 2px);
-                    padding: .375rem .75rem;
-                }
+                height: calc(2.25rem + 2px);
+                padding: .375rem .75rem;
+            }
         </style>
     @endpush
     @section('content')
@@ -60,7 +60,9 @@
                                     <div class="form-group col-md-6">
                                         <label for="alpha">Alpha</label>
                                         <input type="text" class="form-control @error('alpha') is-invalid @enderror"
-                                            name="alpha" id="alpha" placeholder="Masukkan alpha" required>
+                                            name="alpha" id="alpha" placeholder="Masukkan alpha" onkeyup="tes()"
+                                            required>
+                                        <small>Range : 0 - 1</small>
                                         <div class="invalid-feedback">
                                             Harap isi dengan angka saja
                                         </div>
@@ -113,12 +115,14 @@
     @endsection
     @push('js')
         <script>
-            function hapusModal(id) {
-                // console.log(id);
-                var url = "{{ url('/transaksi/purchase-order') }}/" + id;
-                // console.log(url);
-                $('#exampleModalCenter').modal('show');
-                $('#delete_form').attr('action', url);
+            function tes() {
+                var input = $('#alpha').val()
+                if (parseFloat(input) < 0.00 || parseFloat(input) >= 1.01 || input == "") {
+                    $('#alpha').attr('class', 'form-control is-invalid');
+                    $('#alpha').val("");
+                } else {
+                    $('#alpha').attr('class', 'form-control');
+                }
             }
         </script>
     @endpush
