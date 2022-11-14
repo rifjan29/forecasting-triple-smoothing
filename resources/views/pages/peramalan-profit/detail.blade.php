@@ -104,15 +104,11 @@
                     </div>
                     <div class="card mb-4">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                            <h6 class="m-0 font-weight-bold text-primary">Area Chart</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Grafik Data Profit</h6>
                         </div>
                         <div class="card-body">
-                            <div class="chart-area">
-                                <canvas id="myAreaChart"></canvas>
+                            <div class="chart-area" id="grafik">
                             </div>
-                            <hr>
-                            Styling for the area chart can be found in the
-                            <code>/js/demo/chart-area-demo.js</code> file.
                         </div>
                     </div>
                 </div>
@@ -149,14 +145,76 @@
         </div>
     @endsection
     @push('js')
-        <script>
-            function hapusModal(id) {
-                // console.log(id);
-                var url = "{{ url('/transaksi/purchase-order') }}/" + id;
-                // console.log(url);
-                $('#exampleModalCenter').modal('show');
-                $('#delete_form').attr('action', url);
-            }
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+
+        <script type="text/javascript">
+            Highcharts.chart('grafik', {
+                title: {
+                    text: 'Grafik Double Exponential Smoothing'
+                },
+                subtitle: {
+                    text: 'Data Profit'
+                },
+                xAxis: {
+                    categories: [
+                        @foreach ($data as $item)
+                            '{{ $item['periode'] }}',
+                        @endforeach
+                    ]
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Profit'
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+                plotOptions: {
+                    series: {
+                        allowPointSelect: true
+                    }
+                },
+                series: [{
+                        name: 'Data Aktual',
+                        data: [
+                            @foreach ($data as $item)
+                                {{ $item['aktual'] }},
+                            @endforeach
+                        ]
+                    },
+                    {
+                        name: 'Peramalan',
+                        data: [
+                            @foreach ($data as $item)
+                                {{ (float) $item['peramalan'] }},
+                            @endforeach
+                        ]
+                    },
+                    {
+                        name: 'Rata-Rata',
+                        data: [
+                            {{ str_repeat("$rata,", $jumlah) }}
+                        ]
+                    },
+                ],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+            });
         </script>
     @endpush
 </x-app-layout>

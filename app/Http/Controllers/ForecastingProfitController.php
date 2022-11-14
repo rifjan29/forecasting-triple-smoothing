@@ -76,6 +76,9 @@ class ForecastingProfitController extends Controller
                 $forecast = 0;
                 $last_at = 0;
                 $last_bt = 0;
+                $total_aktual = 0;
+                $rata_rata = 0;
+                $total_data1 = 0;
 
 
                 foreach ($data as $key => $value) {
@@ -138,7 +141,11 @@ class ForecastingProfitController extends Controller
                         $get_periode = round(($date2-$date1) / 60 / 60 / 24 / 30);
 
                         $forecast = ((float)$last_at + (float)$last_bt) * $get_periode;
+
                     }
+                    $total_aktual += (int)$value['aktual'];
+                    $total_data1 = count($data);
+                    $rata_rata = $total_aktual / $total_data1;
                 }
                 return view('pages.peramalan-profit.detail')
                     ->with('data', $data)
@@ -146,6 +153,8 @@ class ForecastingProfitController extends Controller
                     ->with('mape', $mape)
                     ->with('alpha', $alpha)
                     ->with('periode', $periode)
+                    ->with('rata', $rata_rata)
+                    ->with('jumlah', $total_data1)
                     ->with('get_periode', $get_periode);
             } else {
                 return redirect()->back()->withError('Alpha Tidak boleh lebih dari 1');

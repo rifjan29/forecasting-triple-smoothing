@@ -22,26 +22,32 @@
                             <div class="row">
                                 <div class="col-md-4 align-self-center">
                                     <div type="button" class="btn btn-primary">
-                                        Alpha <span class="badge badge-light"> <h5 class="font-weight-bold m-0">{{ $alpha }}</h5></span>
+                                        Alpha <span class="badge badge-light">
+                                            <h5 class="font-weight-bold m-0">{{ $alpha }}</h5>
+                                        </span>
                                         <span class="sr-only">unread messages</span>
-                                      </div>
+                                    </div>
                                     <label></label>
 
                                 </div>
                                 <div class="col-md-4 align-self-center">
                                     <div type="button" class="btn btn-info">
-                                        Mape <span class="badge badge-light"> <h5 class="font-weight-bold m-0">{{ $mape }}</h5></span>
+                                        Mape <span class="badge badge-light">
+                                            <h5 class="font-weight-bold m-0">{{ $mape }}</h5>
+                                        </span>
                                         <span class="sr-only">unread messages</span>
-                                      </div>
+                                    </div>
                                     <label></label>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="d-flex flex-column">
                                         <div>
-                                            <small>Peramalan <strong>{{ $get_periode }}</strong> periode pada <strong>{{ $periode }}</strong></small>
+                                            <small>Peramalan <strong>{{ $get_periode }}</strong> periode pada
+                                                <strong>{{ $periode }}</strong></small>
                                         </div>
                                         <div>
-                                            <h4 class="btn btn-warning font-weight-bold">Rp. {{ number_format($forecast, 2, ',', '.') }}</h4>
+                                            <h4 class="btn btn-warning font-weight-bold">Rp.
+                                                {{ number_format($forecast, 2, ',', '.') }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -96,6 +102,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="card mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Grafik Data Purchase Order</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area" id="grafik">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!--Row-->
 
@@ -130,14 +145,76 @@
         </div>
     @endsection
     @push('js')
-        <script>
-            function hapusModal(id) {
-                // console.log(id);
-                var url = "{{ url('/transaksi/purchase-order') }}/" + id;
-                // console.log(url);
-                $('#exampleModalCenter').modal('show');
-                $('#delete_form').attr('action', url);
-            }
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+
+        <script type="text/javascript">
+            Highcharts.chart('grafik', {
+                title: {
+                    text: 'Grafik Double Exponential Smoothing'
+                },
+                subtitle: {
+                    text: 'Data Purchase Order'
+                },
+                xAxis: {
+                    categories: [
+                        @foreach ($data as $item)
+                            '{{ $item['periode'] }}',
+                        @endforeach
+                    ]
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Purchase Order'
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+                plotOptions: {
+                    series: {
+                        allowPointSelect: true
+                    }
+                },
+                series: [{
+                        name: 'Data Aktual',
+                        data: [
+                            @foreach ($data as $item)
+                                {{ $item['aktual'] }},
+                            @endforeach
+                        ]
+                    },
+                    {
+                        name: 'Peramalan',
+                        data: [
+                            @foreach ($data as $item)
+                                {{ (float) $item['peramalan'] }},
+                            @endforeach
+                        ]
+                    },
+                    {
+                        name: 'Rata-Rata',
+                        data: [
+                            {{ str_repeat("$rata,", $jumlah) }}
+                        ]
+                    },
+                ],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+            });
         </script>
     @endpush
 </x-app-layout>
