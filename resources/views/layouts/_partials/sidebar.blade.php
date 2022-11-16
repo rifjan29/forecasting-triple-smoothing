@@ -53,19 +53,22 @@
             </div>
         </div>
     </li>
-    <li class="nav-item">
+    <li class="nav-item {{ request()->segment(1) == 'laporan' ? 'active' : '' }}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTable"
             aria-expanded="true" aria-controls="collapseTable">
             <i class="fas fa-fw fa-table"></i>
             <span>Laporan</span>
         </a>
-        <div id="collapseTable" class="collapse" aria-labelledby="headingTable" data-parent="#accordionSidebar">
+        <div id="collapseTable" class="collapse {{ request()->segment(1) == 'laporan' ? 'show' : '' }}"
+            aria-labelledby="headingTable" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Laporan</h6>
-                <a class="collapse-item" href="form_basics.html">Penjualan</a>
-                <a class="collapse-item" href="form_advanceds.html">Purchase Order</a>
-                <a class="collapse-item" href="form_advanceds.html">Profit</a>
-                <a class="collapse-item" href="form_advanceds.html">Peramalan Profit</a>
+                <a class="collapse-item {{ request()->segment(2) == 'report-purchase-order' ? 'active' : '' }}"
+                    href="{{ route('report-purchase-order.index') }}">Purchase Order</a>
+                <a class="collapse-item {{ request()->segment(2) == 'report-penjualan' ? 'active' : '' }}"
+                    href="{{ route('report-penjualan.index') }}">Penjualan</a>
+                <a class="collapse-item {{ request()->segment(2) == 'report-profit' ? 'active' : '' }}"
+                    href="{{ route('report-profit.index') }}">Profit</a>
             </div>
         </div>
     </li>

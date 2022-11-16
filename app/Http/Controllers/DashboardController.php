@@ -3,8 +3,123 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Transaksi;
 
 class DashboardController extends Controller
 {
-    //
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+
+        $barang = Transaksi::select(
+                            'id_barang',
+                            'barang.nama AS name',
+                        )
+                        ->join('barang', 'transaksi.id_barang', 'barang.id')
+                        ->groupBy('id_barang')
+                        ->groupBy('nama')
+                        ->get();
+
+        foreach($barang as $item) {
+            $penjualan = Transaksi::select(\DB::raw('SUM(total_harga) AS total'))
+                                    ->where('kategori', 'Penjualan')
+                                    ->where('id_barang', $item->id_barang)
+                                    ->first();
+            $penjualan = $penjualan->total ? $penjualan->total : 0;
+
+            $po = Transaksi::select(\DB::raw('SUM(total_harga) AS total'))
+                                    ->where('kategori', 'Purchase Order')
+                                    ->where('id_barang', $item->id_barang)
+                                    ->first();
+            $po = $po->total ? $po->total : 0;
+
+            $profit = Transaksi::select(\DB::raw('SUM(total_harga) AS total'))
+                                    ->where('kategori', 'Profit')
+                                    ->where('id_barang', $item->id_barang)
+                                    ->first();
+            $profit = $profit->total ? $profit->total : 0;
+
+            $item->data = [$penjualan, $po, $profit];
+        }
+
+        $kategori = Transaksi::select('kategori')->groupBy('kategori')->pluck('kategori');
+
+        $data = [
+            'kategori' => $kategori,
+            // 'barang' => json_encode($barang),
+            'barang' => $barang,
+        ];
+
+        return view('dashboard', $data);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
 }
