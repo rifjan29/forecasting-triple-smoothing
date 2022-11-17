@@ -25,12 +25,14 @@ use App\Http\Controllers\DashboardController;
 |
 */
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('TotalPenjualan/{id_barang}', 'DashboardController@TotalPenjualan');
 
-    Route::get('/', function () {
-        return view('dashboard');
-    });
+Route::get('TotalProfit/{id_barang}', 'DashboardController@TotalProfit');
+
+Route::get('TotalPurchaseOrder/{id_barang}', 'DashboardController@TotalPurchaseOrder');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('master/satuan',SatuanController::class);
 

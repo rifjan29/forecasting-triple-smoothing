@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Transaksi;
+use App\Models\Barang;
 
 class DashboardController extends Controller
 {
@@ -14,6 +15,11 @@ class DashboardController extends Controller
      */
     public function index()
     {
+
+        $totalBarang = Barang::count();
+        // $totalPenjualan = Transaksi::where('kategori', 'Penjualan')->where('id_barang', '')->count();
+        // $totalProfit = Transaksi::where('kategori', 'Profit')->count();
+        // $totalPurchaseOrder = Transaksi::where('kategori', 'Purchase Order')->count();
 
         $barang = Transaksi::select(
                             'id_barang',
@@ -48,15 +54,29 @@ class DashboardController extends Controller
 
         $kategori = Transaksi::select('kategori')->groupBy('kategori')->pluck('kategori');
 
+        $this->param['id_barang'] = Barang::all();
+
         $data = [
             'kategori' => $kategori,
             // 'barang' => json_encode($barang),
             'barang' => $barang,
+            'totalBarang' => $totalBarang,
         ];
 
         return view('dashboard', $data);
     }
 
+    public function TotalPenjualan($id) {
+        echo json_encode(Transaksi::where('kategori', 'Penjualan')->where('id_barang', $id)->count());
+    }
+
+    public function TotalProfit($id) {
+        echo json_encode(Transaksi::where('kategori', 'Profit')->where('id_barang', $id)->count());
+    }
+
+    public function TotalPurchaseOrder($id) {
+        echo json_encode(Transaksi::where('kategori', 'Purchase Order')->where('id_barang', $id)->count());
+    }
     /**
      * Show the form for creating a new resource.
      *
