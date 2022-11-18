@@ -29,7 +29,14 @@ class DashboardController extends Controller
                         ->groupBy('id_barang')
                         ->groupBy('nama')
                         ->get();
-
+        $data_barang = Transaksi::select(
+                            'id_barang',
+                            'barang.nama AS name',
+                        )
+                        ->join('barang', 'transaksi.id_barang', 'barang.id')
+                        ->groupBy('id_barang')
+                        ->groupBy('nama')
+                        ->get();
         foreach($barang as $item) {
             $penjualan = Transaksi::select(\DB::raw('SUM(total_harga) AS total'))
                                     ->where('kategori', 'Penjualan')
@@ -62,20 +69,24 @@ class DashboardController extends Controller
             'barang' => $barang,
             'totalBarang' => $totalBarang,
         ];
+        // return $data;
 
-        return view('dashboard', $data);
+        return view('dashboard')->with($data)->with('data_barang',$data_barang);
     }
 
-    public function TotalPenjualan($id) {
-        echo json_encode(Transaksi::where('kategori', 'Penjualan')->where('id_barang', $id)->count());
+    public function TotalPenjualan(Request $request) {
+        $total = Transaksi::where('kategori', 'Penjualan')->where('id_barang', $request->totalPo)->count();
+        return response()->json($total);
     }
 
-    public function TotalProfit($id) {
-        echo json_encode(Transaksi::where('kategori', 'Profit')->where('id_barang', $id)->count());
+    public function TotalProfit(Request $request) {
+        $total = Transaksi::where('kategori', 'Profit')->where('id_barang', $request->totalPo)->count();
+        return response()->json($total);
     }
 
-    public function TotalPurchaseOrder($id) {
-        echo json_encode(Transaksi::where('kategori', 'Purchase Order')->where('id_barang', $id)->count());
+    public function TotalPurchaseOrder(Request $request) {
+        $total = Transaksi::where('kategori', 'Purchase Order')->where('id_barang', $request->totalPo)->count();
+        return response()->json($total);
     }
     /**
      * Show the form for creating a new resource.

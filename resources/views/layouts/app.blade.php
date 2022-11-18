@@ -119,7 +119,15 @@
             placeholder: "Pilih Nama Barang",
             allowClear: true
         });
-        $('.id_satuan').select2({
+        $('.id_penjualan').select2({
+            placeholder: "Pilih Nama Penjualan",
+            allowClear: true
+        });
+        $('.id_penjualan').select2({
+            placeholder: "Pilih Nama Barang",
+            allowClear: true
+        });
+        $('.id_profit').select2({
             placeholder: "Pilih Nama Satuan",
             allowClear: true
         });

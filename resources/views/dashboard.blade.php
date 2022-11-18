@@ -1,6 +1,63 @@
 <x-app-layout>
+    @push('js')
+        <script>
+            $('#id_barang').change(function() {
+                var id_barang = $(this).val();
+                if (id_barang != '0') {
+                    $.ajax({
+                        type: "GET",
+                        url: "/totalpo?totalPo=" + id_barang,
+                        dataType: 'JSON',
+                        success: function(data) {
+                            $('.total_id_barang').text(data);
+                        }
+                    })
+                }else{
+                    $('.total_id_barang').text(0);
+                }
+            });
+
+            // Penjualan
+            $('#id_penjualan').change(function() {
+                var id_penjualan = $(this).val();
+                if (id_penjualan != '0') {
+                    $.ajax({
+                        type: "GET",
+                        url: "/total-penjualan?totalPo=" + id_penjualan,
+                        dataType: 'JSON',
+                        success: function(data) {
+                            $('.total_id_penjualan').text(data);
+                        }
+                    })
+                }else{
+                    $('.total_id_penjualan').text(0);
+                }
+            })
+            // Profit
+            $('#id_profit').change(function() {
+                var id_profit = $(this).val();
+                if (id_profit != '0') {
+                    $.ajax({
+                        type: "GET",
+                        url: "/total-profit?totalPo=" + id_profit,
+                        dataType: 'JSON',
+                        success: function(data) {
+                            $('.total_id_profit').text(data);
+                        }
+                    })
+                }else{
+                    $('.total_id_profit').text(0);
+                }
+            })
+        </script>
+    @endpush
     @push('css')
         <style>
+            .select2-container--default .select2-selection--single {
+                border: 1px solid #ced4da;
+                height: calc(2.25rem + 2px);
+                padding: .375rem .75rem;
+            }
             .highcharts-figure,
             .highcharts-data-table table {
                 min-width: 310px;
@@ -58,7 +115,6 @@
         <script type="text/javascript">
             var a = {!! $barang !!};
             var series = a;
-            console.log(series)
             Highcharts.chart('container', {
                 chart: {
                     type: 'bar'
@@ -124,10 +180,10 @@
             </div>
             <div class="row mb-3">
                 <!-- Earnings (Monthly) Card Example -->
-                <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card h-100">
+                <div class="col-xl-3 col-md-6 mb-4 align-self-center">
+                    <div class="card">
                         <div class="card-body">
-                            <div class="row align-items-center">
+                            <div class="row align-items-center align-self-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-uppercase mb-1">Total Data Barang</div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $totalBarang }}</div>
@@ -141,26 +197,28 @@
                 </div>
                 <!-- Earnings (Annual) Card Example -->
                 <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card h-100">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <select name="barang" id="id_barang"
+                                class="barang id_barang form-control py-3 @error('barang') is-invalid @enderror mb-2"
+                                required>
+                                <option value="0">Pilih Nama Barang</option>
+                                @foreach ($data_barang as $item)
+                                    <option value="{{ $item->id_barang }}">{{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
-                                    <div class="text-xs font-weight-bold text-uppercase mb-1">Total Data Purchase Order
+                                    <div class="text-xs font-weight-bold text-uppercase mb-1">Total Purchase Order
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">650</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" ><span id="total_id_barang" class="total_id_barang">0</span></div>
                                 </div>
                                 <div>
-                                    <select name="id_barang" id="id_barang"
-                                        class="id_barang form-control py-3 @error('id_barang') is-invalid @enderror"
-                                        required>
-                                        <option value="0">Pilih Nama Barang</option>
-                                        <option value="0">Pilih Nama Barang</option>
-
-                                        {{-- @foreach ($id_barang as $item) --}}
-                                        {{-- <option value="{{ $item->id . '-' . $item->nama }}">{{ $item->nama }}
-                                            </option> --}}
-                                        {{-- @endforeach --}}
-                                    </select>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-shopping-cart fa-2x text-success"></i>
@@ -171,12 +229,25 @@
                 </div>
                 <!-- New User Card Example -->
                 <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card h-100">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <select name="barang" id="id_penjualan"
+                                class="barang id_penjualan form-control py-3 @error('barang') is-invalid @enderror mb-2"
+                                required>
+                                <option value="0">Pilih Nama Penjualan</option>
+                                @foreach ($data_barang as $item)
+                                    <option value="{{ $item->id_barang }}">{{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-uppercase mb-1">Total Data Penjualan</div>
-                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">366</div>
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800"><span id="total_id_penjualan" class="total_id_penjualan">0</span></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-users fa-2x text-info"></i>
@@ -187,12 +258,25 @@
                 </div>
                 <!-- Pending Requests Card Example -->
                 <div class="col-xl-3 col-md-6 mb-4">
-                    <div class="card h-100">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <select name="barang" id="id_profit"
+                                class="barang id_profit form-control py-3 @error('barang') is-invalid @enderror mb-2"
+                                required>
+                                <option value="0">Pilih Nama Barang</option>
+                                @foreach ($data_barang as $item)
+                                    <option value="{{ $item->id_barang }}">{{ $item->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-uppercase mb-1">Total Data Profit</div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800"><span id="total_id_profit" class="total_id_profit">0</span></div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-comments fa-2x text-warning"></i>
@@ -203,7 +287,7 @@
                 </div>
 
                 <!-- Area Chart -->
-                <div class="col-xl-12 col-lg-7">
+                <div class="col-xl-12 col-lg-7 mt-5">
                     <div class="card mb-4">
                         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                             <h6 class="m-0 font-weight-bold text-primary">Grafik Total Keuangan</h6>

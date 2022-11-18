@@ -25,11 +25,11 @@ use App\Http\Controllers\DashboardController;
 |
 */
 
-Route::get('TotalPenjualan/{id_barang}', 'DashboardController@TotalPenjualan');
+Route::get('/total-penjualan', [DashboardController::class,'TotalPenjualan'])->name('total.penjualan');
 
-Route::get('TotalProfit/{id_barang}', 'DashboardController@TotalProfit');
+Route::get('/total-profit', [DashboardController::class,'TotalProfit'])->name('total.profit');
 
-Route::get('TotalPurchaseOrder/{id_barang}', 'DashboardController@TotalPurchaseOrder');
+Route::get('/totalpo',[DashboardController::class,'TotalPurchaseOrder'])->name('total.po');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
