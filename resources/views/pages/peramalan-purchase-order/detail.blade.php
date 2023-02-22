@@ -17,41 +17,81 @@
             <div class="row">
                 <!-- DataTable with Hover -->
                 <div class="col-lg-12">
-                    <div class="card mb-4">
-                        <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
                             <div class="row">
-                                <div class="col-md-4 align-self-center">
-                                    <div type="button" class="btn btn-primary">
-                                        Alpha <span class="badge badge-light">
-                                            <h5 class="font-weight-bold m-0">{{ $alpha }}</h5>
+                                <div class="col-md-6 align-self-center">
+                                    <div type="button" class="btn btn-primary w-100 d-flex">
+                                        MAPE <span class="badge badge-light mx-2">
+                                            <h5 class="font-weight-bold m-0">{{ number_format($mape, 2, ',', '.') }}%</h5>
                                         </span>
                                         <span class="sr-only">unread messages</span>
                                     </div>
                                     <label></label>
 
                                 </div>
-                                <div class="col-md-4 align-self-center">
-                                    <div type="button" class="btn btn-info">
-                                        Mape <span class="badge badge-light">
-                                            <h5 class="font-weight-bold m-0">{{ $mape }}</h5>
+                                <div class="col-md-6 align-items-center">
+                                    <div type="button" class="btn btn-primary w-100">
+                                        MAD <span class="badge badge-light">
+                                            <h5 class="font-weight-bold m-0">{{ number_format($mad, 2, ',', '.') }}</h5>
+                                        </span>
+                                        <span class="sr-only">unread messages</span>
+                                    </div>
+                                    <label></label>
+
+                                </div>
+                                <div class="col-md-6 align-self-center">
+                                    <div type="button" class="btn btn-primary w-100">
+                                        MSE <span class="badge badge-light">
+                                            <h5 class="font-weight-bold m-0">{{ number_format($mse, 2, ',', '.') }}</h5>
+                                        </span>
+                                        <span class="sr-only">unread messages</span>
+                                    </div>
+                                    <label></label>
+
+                                </div>
+                                <div class="col-md-6 align-self-center">
+                                    <div type="button" class="btn btn-primary w-100">
+                                        MFE <span class="badge badge-light">
+                                            <h5 class="font-weight-bold m-0">{{ number_format($mfe, 2, ',', '.') }}</h5>
+                                        </span>
+                                        <span class="sr-only">unread messages</span>
+                                    </div>
+                                    <label></label>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 align-self-center">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div type="button" class="btn btn-info w-100">
+                                        Alpha <span class="badge badge-light w-100">
+                                            <h5 class="font-weight-bold m-0">{{ $alpha }}</h5>
                                         </span>
                                         <span class="sr-only">unread messages</span>
                                     </div>
                                     <label></label>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="d-flex flex-column">
+                                <div class="col-md-6">
+                                    <div class="d-flex flex-column w-100">
                                         <div>
-                                            <small>Peramalan <strong>{{ $get_periode }}</strong> periode pada
-                                                <strong>{{ $periode }}</strong></small>
+                                            <div class="btn btn-warning  w-100">
+                                                <small>Peramalan <strong>{{ $get_periode }}</strong> periode pada
+                                                    <strong>{{ $periode }}</strong></small>
+                                                <span class="font-weight-bold m-0 badge badge-light w-100">
+                                                    <h5 class="font-weight-bold m-0">Rp.{{ number_format($forecast, 2, ',', '.') }}</h5>
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h4 class="btn btn-warning font-weight-bold">Rp.
-                                                {{ number_format($forecast, 2, ',', '.') }}</h4>
-                                        </div>
+                                           
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-body">
                         </div>
                     </div>
                     <div class="card mb-4">
@@ -81,6 +121,10 @@
                                             <th>Parameter Pemulusan Trend Linier (bt)</th>
                                             <th>Peramalan</th>
                                             <th>Xt-Ft/Xt</th>
+                                            <th>|Xt-Ft|/n</th>
+                                            <th>(Xt-Ft)<sup>2</sup>/n</th>
+                                            <th>(Xt-Ft)/n</th>
+                                            <th>MR</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -94,11 +138,24 @@
                                                 <td>{{ number_format($item['bt'], 2, ',', '.') }}</td>
                                                 <td>Rp{{ number_format((float) $item['peramalan'], 2, ',', '.') }}</td>
                                                 <td>{{ number_format((float) $item['xtft'], 2, ',', '.') }}</td>
+                                                <td>{{ number_format((float) $item['xtftn'], 2, ',', '.') }}</td>
+                                                <td>{{ number_format((float) $item['xtft2n'], 2, ',', '.') }}</td>
+                                                <td>{{ number_format((float) $item['xtftn2'], 2, ',', '.') }}</td>
+                                                <td>{{ number_format((float) $item['mr'], 2, ',', '.') }}</td>
                                                 </td>
                                             </tr>
                                         @endforeach
                                     </tbody>
                                 </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">Grafik Pengendali Moving Range</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area" id="mr">
                             </div>
                         </div>
                     </div>
@@ -148,6 +205,76 @@
         <script src="https://code.highcharts.com/highcharts.js"></script>
 
         <script type="text/javascript">
+         document.addEventListener('DOMContentLoaded', function () { 
+            const chart = Highcharts.chart('mr', {
+                title: {
+                    text: 'Grafik Pengendali Moving Range'
+                },
+                subtitle: {
+                    text: 'Data Purchase Order'
+                },
+                xAxis: {
+                    categories: [
+                        @foreach ($data as $item)
+                            '{{ $item['periode'] }}',
+                        @endforeach
+                    ]
+                },
+                yAxis: {
+                    title: {
+                        text: 'Jumlah Purchase Order'
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+                plotOptions: {
+                    series: {
+                        allowPointSelect: true
+                    }
+                },
+                series: [{
+                        name: 'MR',
+                        data: [
+                            @foreach ($data as $item)
+                                @if ($item['mr'] != null)
+                                    {{ $item['mr'] }},
+                                @endif
+                            @endforeach
+                        ]
+                    },
+                    {
+                        name: 'LCL',
+                        data: [
+                            {{ str_repeat("$lcl,", $jumlah) }}
+                        ]
+                    },
+                    {
+                        name: 'UCL',
+                        data: [
+                            {{ str_repeat("$ucl,", $jumlah) }}
+                        ]
+                    },
+                ],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
+            });
+         });
+        
             Highcharts.chart('grafik', {
                 title: {
                     text: 'Grafik Double Exponential Smoothing'
@@ -215,6 +342,10 @@
                     }]
                 }
             });
+        </script>
+        
+        <script type="text/javascript">
+           
         </script>
     @endpush
 </x-app-layout>

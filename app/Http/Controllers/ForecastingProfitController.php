@@ -59,20 +59,36 @@ class ForecastingProfitController extends Controller
                         'bt' =>  $key,
                         'peramalan' =>$key == 0 ? "" : "" ,
                         'xtft' => $key == 0 ? "" : 0 ,
+                        'xtftn' => $key == 0 ? "" : 0 ,
+                        'xtft2n' => $key == 0 ? "" : 0 ,
+                        'xtftn2' => $key == 0 ? "" : 0 ,
+                        'mr' => $key == 0 ? "" : 0 ,
 
                     ];
                     array_push($data, $d);
                 }
 
                 $newData = [];
+                $total_mr_array = [];
                 $alpha = $request->alpha;
                 $current_smoothing_pertama = 0;
                 $current_smoothing_kedua = 0;
                 $current_at = 0;
                 $current_bt = 0;
                 $mape = 0;
+                $mad = 0;
+                $mse = 0;
+                $mfe = 0;
+                $mr =  0;
+                $ucl = 0;
+                $lcl = 0;
                 $total_data = 0;
                 $total_xtft = 0;
+                $total_xtftn = 0;
+                $total_xtft2n = 0;
+                $total_xtftn2 = 0;
+                $total_mr = 0;
+                $rata_mr =  0;
                 $forecast = 0;
                 $last_at = 0;
                 $last_bt = 0;
@@ -91,8 +107,12 @@ class ForecastingProfitController extends Controller
 
                         $current_bt = (float)$value['bt'];
 
+                        $current_aktual = (float)$value['aktual'];
+
+                        $current_peramalan = (float)$value['peramalan'];
                     }
                     if ($key > 0) {
+                        
                         $smoothing_pertama = $alpha * (int)$value['aktual'] + (1 - $alpha) * $current_smoothing_pertama;
                         $data[$key]['smoothing pertama'] = $smoothing_pertama;
                         $current_smoothing_pertama = $smoothing_pertama;
@@ -119,11 +139,40 @@ class ForecastingProfitController extends Controller
                             $total_xtft += abs($xtft);
                             $total_data = count($data);
                             $mape = $total_xtft / $total_data * 100;
-                        }
 
+
+                            $xtftn = ((float)$data[$key]['aktual'] - (float)$data[$key]['peramalan']) / $total_data;
+                            $data[$key]['xtftn'] = abs($xtftn);
+
+                            $total_xtftn += abs($xtftn);
+                            $mad = $total_xtftn;
+
+
+                            $xtft2n = (((float)$data[$key]['aktual'] - (float)$data[$key]['peramalan']) * ((float)$data[$key]['aktual'] - (float)$data[$key]['peramalan'])) / $total_data;
+                            $data[$key]['xtft2n'] = abs($xtft2n);
+
+                            $total_xtft2n += abs($xtft2n);
+                            $mse = $total_xtft2n;
+
+
+                            $xtftn2 = ((float)$data[$key]['aktual'] - (float)$data[$key]['peramalan']) / $total_data;
+                            $data[$key]['xtftn2'] = $xtftn2;
+
+                            $total_xtftn2 += $xtftn2;
+                            $mfe = $total_xtftn2;
+
+                           
+                            $mr = ((float)$data[$key]['peramalan'] - (float)$data[$key]['aktual']) - ($current_peramalan - $current_aktual);
+                            $data[$key]['mr'] = abs($mr);
+                            $current_aktual = $data[$key]['aktual'];
+                            $current_peramalan = $data[$key]['peramalan'];
+
+                            array_push($total_mr_array, abs($mr));
+                            
+                        }
+                        
                         $last_at = end($data)['at'];
                         $last_bt = end($data)['bt'];
-
 
                         $last_periode = end($data)['periode'];
                         $date = explode('-', $last_periode);
@@ -140,17 +189,26 @@ class ForecastingProfitController extends Controller
 
                         $get_periode = round(($date2-$date1) / 60 / 60 / 24 / 30);
 
-                        $forecast = ((float)$last_at + (float)$last_bt) * $get_periode;
+                        $forecast = ((float)$last_at + ((float)$last_bt) * $get_periode);
 
                     }
                     $total_aktual += (int)$value['aktual'];
                     $total_data1 = count($data);
                     $rata_rata = $total_aktual / $total_data1;
                 }
+                $rata_mr = array_sum($total_mr_array)/($total_data1-1);
+                $ucl = 2.66 * $rata_mr;
+                $lcl = -2.66 * $rata_mr;
                 return view('pages.peramalan-profit.detail')
                     ->with('data', $data)
                     ->with('forecast', $forecast)
                     ->with('mape', $mape)
+                    ->with('mad', $mad)
+                    ->with('mse', $mse)
+                    ->with('mfe', $mfe)
+                    ->with('ucl', $ucl)
+                    ->with('lcl', $lcl)
+                    ->with('mr', $mr)
                     ->with('alpha', $alpha)
                     ->with('periode', $periode)
                     ->with('rata', $rata_rata)
